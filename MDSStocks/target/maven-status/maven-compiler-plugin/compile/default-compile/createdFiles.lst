@@ -1,0 +1,5 @@
+rs\mds\Stocks\ctrl\StocksController.class
+rs\mds\Stocks\ent\Stock.class
+rs\mds\Stocks\serv\StocksService.class
+rs\mds\Stocks\repo\StocksRepo.class
+rs\mds\Stocks\StocksApplication.class

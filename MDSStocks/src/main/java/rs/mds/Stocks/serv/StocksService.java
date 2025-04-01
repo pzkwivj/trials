@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import rs.mds.Stocks.ent.Stock;
 import rs.mds.Stocks.repo.StocksRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import rs.mds.Stocks.ent.StockPair;
 
 /**
  *
@@ -28,6 +29,9 @@ public class StocksService {
 
     @Autowired
     private StocksRepo stocksRepo;
+
+    @Autowired
+    private StockCalculator calculator;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -43,6 +47,11 @@ public class StocksService {
         query.where(cb.and(nameCondition, fromCondition, toCondition));
 
         return entityManager.createQuery(query).getResultList();
+    }
+
+    public StockPair singleTrade(String name, LocalDate from, LocalDate to) {
+        List<Stock> list = findByCustomCriteria(name, from, to);
+        return calculator.singleTrade(list);
     }
 
     public List<Stock> getAllStocks() {

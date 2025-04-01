@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import rs.mds.Stocks.ent.Stock;
 import rs.mds.Stocks.serv.StocksService;
 import org.springframework.beans.factory.annotation.Autowired;
+import rs.mds.Stocks.ent.StockPair;
 
 /**
  *
@@ -49,5 +50,10 @@ public class StocksController {
     @GetMapping(value = "/filter")
     public List<Stock> filter(String name, String from, String to) {
         return stocksService.findByCustomCriteria(name, stocksService.convert(from), stocksService.convert(to));
+    }
+
+    @GetMapping(value = "/singleTrade")
+    public StockPair singleTrade(String name, String from, String to) {
+        return stocksService.singleTrade(name, stocksService.convert(from), stocksService.convert(to));
     }
 }

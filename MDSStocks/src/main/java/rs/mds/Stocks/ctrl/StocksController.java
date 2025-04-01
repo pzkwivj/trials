@@ -4,6 +4,7 @@
  */
 package rs.mds.Stocks.ctrl;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,5 +44,10 @@ public class StocksController {
     @GetMapping(value = "/delete")
     public void delete(Long id) {
         stocksService.delete(id);
+    }
+
+    @GetMapping(value = "/filter")
+    public List<Stock> filter(String name, String from, String to) {
+        return stocksService.findByCustomCriteria(name, stocksService.convert(from), stocksService.convert(to));
     }
 }

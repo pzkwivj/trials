@@ -22,3 +22,6 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+/MDSStocks/target/Stocks-0.0.1-SNAPSHOT.jar.original
+/MDSStocks/target/surefire-reports/rs.mds.Stocks.StocksApplicationTests.txt
+/MDSStocks/target/Stocks-0.0.1-SNAPSHOT.jar.original

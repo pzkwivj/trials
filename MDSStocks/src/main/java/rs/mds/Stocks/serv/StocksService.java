@@ -13,12 +13,14 @@ import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import rs.mds.Stocks.ent.Stock;
 import rs.mds.Stocks.repo.StocksRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import rs.mds.Stocks.ent.StockPair;
+import java.time.temporal.ChronoUnit;
 
 /**
  *
@@ -52,6 +54,19 @@ public class StocksService {
     public StockPair singleTrade(String name, LocalDate from, LocalDate to) {
         List<Stock> list = findByCustomCriteria(name, from, to);
         return calculator.singleTrade(list);
+    }
+    
+    public List<StockPair> tripleTrade(String name, LocalDate from, LocalDate to) {
+        long daysBetween = ChronoUnit.DAYS.between(from, to);
+        daysBetween++;
+        List<Stock> list = findByCustomCriteria(name, from, to);
+        List<Stock> plist = findByCustomCriteria(name, from.minusDays(daysBetween), to.minusDays(daysBetween));
+        List<Stock> slist = findByCustomCriteria(name, from.plusDays(daysBetween), to.plusDays(daysBetween));
+        List<StockPair> pairList = new ArrayList<>();
+        pairList.add (calculator.singleTrade(plist));
+        pairList.add (calculator.singleTrade(list));
+        pairList.add (calculator.singleTrade(slist));
+        return pairList;
     }
 
     public List<Stock> getAllStocks() {

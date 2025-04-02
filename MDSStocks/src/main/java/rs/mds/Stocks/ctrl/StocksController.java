@@ -56,4 +56,9 @@ public class StocksController {
     public StockPair singleTrade(String name, String from, String to) {
         return stocksService.singleTrade(name, stocksService.convert(from), stocksService.convert(to));
     }
+    
+        @GetMapping(value = "/comparativeTrade")
+    public List<StockPair> comparativeTrade(String name, String from, String to) {
+        return stocksService.tripleTrade(name, stocksService.convert(from), stocksService.convert(to));
+    }
 }

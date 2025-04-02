@@ -66,6 +66,9 @@ public class StocksService {
         pairList.add (calculator.singleTrade(plist, "Previous Period"));
         pairList.add (calculator.singleTrade(list, "Main period"));
         pairList.add (calculator.singleTrade(slist, "Next Period"));
+        pairList.add (calculator.dayTrade(plist, "Previous Period day by day"));
+        pairList.add (calculator.dayTrade(list, "Main period day by day"));
+        pairList.add (calculator.dayTrade(slist, "Next Period day by day"));
         return pairList;
     }
 

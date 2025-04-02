@@ -39,5 +39,22 @@ public class StockCalculator {
         }
         return pair;
     }
+    
+        public StockPair dayTrade(List<Stock> list, String period_name) {
+        StockPair pair = new StockPair(period_name, null, null);
+            for (Stock iStock : list) {
+                
+                if (iStock.getLow() >= iStock.getHigh()) {
+                    continue;
+                }
+                 if (pair.getBuyDay() == null) {
+                    pair.setBuyDay(iStock);
+                }
+                 pair.setSellDay(iStock);
+                 pair.setProfit(pair.getProfit() + iStock.getHigh() - iStock.getLow());                
+            }
+        
+        return pair;
+    }
 
 }

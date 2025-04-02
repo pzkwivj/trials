@@ -30,10 +30,10 @@ public class StockCalculator {
                 if (oStock.getDate().isAfter(iStock.getDate())) {
                     continue;
                 }
-                if (!iStock.getName().equalsIgnoreCase(oStock.getName())){
+                if (!iStock.getName().equalsIgnoreCase(oStock.getName())) {
                     continue;
                 }
-                
+
                 if ((iStock.getHigh() - oStock.getLow()) > diff) {
                     pair.setSellDay(iStock);
                     pair.setBuyDay(oStock);
@@ -42,28 +42,27 @@ public class StockCalculator {
             }
         }
         try {
-           pair.calculateProfit();
-        }
-        catch (Exception e){
+            pair.calculateProfit();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return pair;
     }
-    
-        public StockPair dayTrade(List<Stock> list, String period_name) {
+
+    public StockPair dayTrade(List<Stock> list, String period_name) {
         StockPair pair = new StockPair(period_name, null, null);
-            for (Stock iStock : list) {
-                
-                if (iStock.getLow() >= iStock.getHigh()) {
-                    continue;
-                }
-                 if (pair.getBuyDay() == null) {
-                    pair.setBuyDay(iStock);
-                }
-                 pair.setSellDay(iStock);
-                 pair.setProfit(pair.getProfit() + iStock.getHigh() - iStock.getLow());                
+        for (Stock iStock : list) {
+
+            if (iStock.getLow() >= iStock.getHigh()) {
+                continue;
             }
-        
+            if (pair.getBuyDay() == null) {
+                pair.setBuyDay(iStock);
+            }
+            pair.setSellDay(iStock);
+            pair.setProfit(pair.getProfit() + iStock.getHigh() - iStock.getLow());
+        }
+
         return pair;
     }
 

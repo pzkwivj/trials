@@ -4,13 +4,11 @@
  */
 package rs.mds.Stocks.ctrl;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import rs.mds.Stocks.ent.Stock;
 import rs.mds.Stocks.serv.StocksService;
 import org.springframework.beans.factory.annotation.Autowired;

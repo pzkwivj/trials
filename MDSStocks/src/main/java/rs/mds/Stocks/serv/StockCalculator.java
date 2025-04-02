@@ -16,9 +16,9 @@ import rs.mds.Stocks.ent.StockPair;
 @Component
 public class StockCalculator {
 
-    public StockPair singleTrade(List<Stock> list) {
+    public StockPair singleTrade(List<Stock> list, String period_name) {
         double diff = -Double.MAX_VALUE;
-        StockPair pair = new StockPair(null, null);
+        StockPair pair = new StockPair(period_name, null, null);
         for (Stock oStock : list) {
             for (Stock iStock : list) {
                 if (oStock.getDate().isAfter(iStock.getDate())) {
@@ -30,6 +30,12 @@ public class StockCalculator {
                     diff = iStock.getHigh() - oStock.getLow();
                 }
             }
+        }
+        try {
+           pair.calculateProfit();
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
         return pair;
     }

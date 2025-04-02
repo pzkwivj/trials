@@ -51,9 +51,9 @@ public class StocksService {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public StockPair singleTrade(String name, LocalDate from, LocalDate to) {
+    public StockPair singleTrade(String name, LocalDate from, LocalDate to, String period_name) {
         List<Stock> list = findByCustomCriteria(name, from, to);
-        return calculator.singleTrade(list);
+        return calculator.singleTrade(list, period_name);
     }
     
     public List<StockPair> tripleTrade(String name, LocalDate from, LocalDate to) {
@@ -62,10 +62,10 @@ public class StocksService {
         List<Stock> list = findByCustomCriteria(name, from, to);
         List<Stock> plist = findByCustomCriteria(name, from.minusDays(daysBetween), to.minusDays(daysBetween));
         List<Stock> slist = findByCustomCriteria(name, from.plusDays(daysBetween), to.plusDays(daysBetween));
-        List<StockPair> pairList = new ArrayList<>();
-        pairList.add (calculator.singleTrade(plist));
-        pairList.add (calculator.singleTrade(list));
-        pairList.add (calculator.singleTrade(slist));
+        List<StockPair> pairList = new ArrayList<>();    
+        pairList.add (calculator.singleTrade(plist, "Previous Period"));
+        pairList.add (calculator.singleTrade(list, "Main period"));
+        pairList.add (calculator.singleTrade(slist, "Next Period"));
         return pairList;
     }
 

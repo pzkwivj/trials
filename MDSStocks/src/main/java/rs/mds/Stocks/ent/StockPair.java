@@ -15,15 +15,30 @@ public class StockPair {
 
     @Getter
     @Setter
+    private String name;
+    
+    @Getter
+    @Setter
     private Stock buyDay;
 
     @Getter
     @Setter
     private Stock sellDay;
+    
+    @Getter
+    @Setter
+    private double profit;
+    
+    
 
-    public StockPair(Stock buyDay, Stock sellDay) {
+    public StockPair(String name, Stock buyDay, Stock sellDay) {
+        this.name = name;
         this.buyDay = buyDay;
         this.sellDay = sellDay;
+    }
+    
+    public void calculateProfit() {
+        this.profit = this.sellDay.getHigh() - this.buyDay.getLow();
     }
 
 }

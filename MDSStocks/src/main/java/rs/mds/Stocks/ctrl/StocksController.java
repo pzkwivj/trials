@@ -54,7 +54,7 @@ public class StocksController {
 
     @GetMapping(value = "/singleTrade")
     public StockPair singleTrade(String name, String from, String to) {
-        return stocksService.singleTrade(name, stocksService.convert(from), stocksService.convert(to));
+        return stocksService.singleTrade(name, stocksService.convert(from), stocksService.convert(to) , "Main Period");
     }
     
         @GetMapping(value = "/comparativeTrade")

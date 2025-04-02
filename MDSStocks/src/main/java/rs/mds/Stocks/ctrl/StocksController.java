@@ -49,16 +49,26 @@ public class StocksController {
 
     @GetMapping(value = "/filter")
     public List<Stock> filter(String name, String from, String to) {
-        return stocksService.findByCustomCriteria(name, stocksService.convert(from), stocksService.convert(to));
+        return stocksService.findByCustomCriteria(convertName(name), stocksService.convert(from), stocksService.convert(to));
     }
 
     @GetMapping(value = "/singleTrade")
     public StockPair singleTrade(String name, String from, String to) {
-        return stocksService.singleTrade(name, stocksService.convert(from), stocksService.convert(to) , "Main Period");
+        return stocksService.singleTrade(convertName(name), stocksService.convert(from), stocksService.convert(to) , "Main Period");
     }
     
         @GetMapping(value = "/comparativeTrade")
     public List<StockPair> comparativeTrade(String name, String from, String to) {
-        return stocksService.tripleTrade(name, stocksService.convert(from), stocksService.convert(to));
+        return stocksService.tripleTrade(convertName(name), stocksService.convert(from), stocksService.convert(to));
+    }
+    
+    private String convertName(String name) {
+        if (name == null) return name;
+        if (name.equalsIgnoreCase("Amazon")) return "AMZN";
+        if (name.equalsIgnoreCase("Facebook")) return "META";
+        if (name.equalsIgnoreCase("Google")) return "GOOG";
+        if (name.equalsIgnoreCase("Netflix")) return "NFLX";
+        if (name.equalsIgnoreCase("Apple")) return "AAPL";
+        return name;
     }
 }

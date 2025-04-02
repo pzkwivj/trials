@@ -20,10 +20,20 @@ public class StockCalculator {
         double diff = -Double.MAX_VALUE;
         StockPair pair = new StockPair(period_name, null, null);
         for (Stock oStock : list) {
+            if (oStock.getName() == null) {
+                continue;
+            }
             for (Stock iStock : list) {
+                if (iStock.getName() == null) {
+                    continue;
+                }
                 if (oStock.getDate().isAfter(iStock.getDate())) {
                     continue;
                 }
+                if (!iStock.getName().equalsIgnoreCase(oStock.getName())){
+                    continue;
+                }
+                
                 if ((iStock.getHigh() - oStock.getLow()) > diff) {
                     pair.setSellDay(iStock);
                     pair.setBuyDay(oStock);

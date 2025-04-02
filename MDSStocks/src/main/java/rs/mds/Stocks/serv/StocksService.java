@@ -50,6 +50,18 @@ public class StocksService {
 
         return entityManager.createQuery(query).getResultList();
     }
+    
+        public List<Stock> findByCustomCriteriaNoName(LocalDate from, LocalDate to) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Stock> query = cb.createQuery(Stock.class);
+        Root<Stock> root = query.from(Stock.class);
+
+        Predicate fromCondition = cb.greaterThanOrEqualTo(root.get("date"), from);
+        Predicate toCondition = cb.lessThanOrEqualTo(root.get("date"), to);
+        query.where(cb.and(fromCondition, toCondition));
+
+        return entityManager.createQuery(query).getResultList();
+    }
 
     public StockPair singleTrade(String name, LocalDate from, LocalDate to, String period_name) {
         List<Stock> list = findByCustomCriteria(name, from, to);
@@ -62,6 +74,11 @@ public class StocksService {
         List<Stock> list = findByCustomCriteria(name, from, to);
         List<Stock> plist = findByCustomCriteria(name, from.minusDays(daysBetween), to.minusDays(daysBetween));
         List<Stock> slist = findByCustomCriteria(name, from.plusDays(daysBetween), to.plusDays(daysBetween));
+        
+        List<Stock> listW = findByCustomCriteriaNoName(from, to);
+        List<Stock> plistW = findByCustomCriteriaNoName(from.minusDays(daysBetween), to.minusDays(daysBetween));
+        List<Stock> slistW = findByCustomCriteriaNoName(from.plusDays(daysBetween), to.plusDays(daysBetween));
+        
         List<StockPair> pairList = new ArrayList<>();    
         pairList.add (calculator.singleTrade(plist, "Previous Period"));
         pairList.add (calculator.singleTrade(list, "Main period"));
@@ -69,6 +86,13 @@ public class StocksService {
         pairList.add (calculator.dayTrade(plist, "Previous Period day by day"));
         pairList.add (calculator.dayTrade(list, "Main period day by day"));
         pairList.add (calculator.dayTrade(slist, "Next Period day by day"));
+        
+        pairList.add (calculator.singleTrade(plistW, "Previous Period All Stocks"));
+        pairList.add (calculator.singleTrade(listW, "Main period All Stocks"));
+        pairList.add (calculator.singleTrade(slistW, "Next Period All Stocks"));
+        pairList.add (calculator.dayTrade(plistW, "Previous Period day by day All Stocks"));
+        pairList.add (calculator.dayTrade(listW, "Main period day by day All Stocks"));
+        pairList.add (calculator.dayTrade(slistW, "Next Period day by day All Stocks"));
         return pairList;
     }
 

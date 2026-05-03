@@ -11,13 +11,15 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
-    @Column(name="category_name")
-    private String name;
+    // Mapiramo na preostalu kolonu iz SQL-a: category_name
+    @Column(name = "category_name", nullable = false)
+    private String categoryName;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+
     public Long getCategoryId() {
         return categoryId;
     }
@@ -26,12 +28,12 @@ public class Category {
         this.categoryId = categoryId;
     }
 
-    public String getName() {
-        return name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public List<Product> getProducts() {

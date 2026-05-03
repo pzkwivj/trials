@@ -11,51 +11,47 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long discountId;
 
-    private Double percentage;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @Column(name = "discount_percent", nullable = false)
+    private Double percentage; // Mapirano na discount_percent
+
+    @Column(name = "discounted_price", nullable = false)
+    private Double discountedPrice;
+
+    @Column(name = "from_date", nullable = false)
+    private LocalDate startDate; // Mapirano na from_date
+
+    @Column(name = "to_date", nullable = false)
+    private LocalDate endDate; // Mapirano na to_date
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-        public Long getDiscountId() {
-        return discountId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
-    public void setDiscountId(Long discountId) {
-        this.discountId = discountId;
-    }
+    // --- Getters and Setters ---
+    // Obavezno proveri da li imena metoda odgovaraju poljima iznad
+    
+    public Long getDiscountId() { return discountId; }
+    public void setDiscountId(Long discountId) { this.discountId = discountId; }
 
-    public Double getPercentage() {
-        return percentage;
-    }
+    public Double getPercentage() { return percentage; }
+    public void setPercentage(Double percentage) { this.percentage = percentage; }
 
-    public void setPercentage(Double percentage) {
-        this.percentage = percentage;
-    }
+    public Double getDiscountedPrice() { return discountedPrice; }
+    public void setDiscountedPrice(Double discountedPrice) { this.discountedPrice = discountedPrice; }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
-    public LocalDate getEndDate() {
-        return endDate;
-    }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
 }

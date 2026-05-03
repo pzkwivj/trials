@@ -12,37 +12,41 @@ public class Company {
     private Long companyId;
 
     @Column(name = "company_name", nullable = false)
-    private String name;
+    private String companyName;
 
-    @Column(nullable = false)
-    private String pib;   // must not be null        
+    @Column(length = 200) // Usklađeno sa varchar(200) iz SQL-a
+    private String address;
+
+    @Column(nullable = false, unique = true) // unique=true jer smo dodali UNIQUE INDEX u bazi
+    private String pib;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+
     public Long getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(Long companyId) {
+    public void setCategoryId(Long companyId) {
         this.companyId = companyId;
     }
 
-    public String getName() {
-        return name;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public String getAddress() {
+        return address;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPib() {
@@ -51,5 +55,13 @@ public class Company {
 
     public void setPib(String pib) {
         this.pib = pib;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

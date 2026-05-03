@@ -8,25 +8,29 @@ import java.util.List;
 public class Product {
 
     @Id
+    // PAŽNJA: Ako baza ne koristi Auto-increment, ukloni @GeneratedValue 
+    // ili proveri da li tvoj SQL dialekt podržava Identity
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @Column(name = "product_name", nullable = false) // Usklađeno sa NOT NULL
     private String productName;
+
+    @Column(nullable = false) // Usklađeno sa NOT NULL
     private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false) // Usklađeno sa NOT NULL
     private Company company;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false) // Usklađeno sa NOT NULL
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Discount> discounts;
 
-    // --- Getters and Setters ---
-    public Long getProductId() {
+        public Long getProductId() {
         return productId;
     }
 
@@ -74,3 +78,4 @@ public class Product {
         this.discounts = discounts;
     }
 }
+

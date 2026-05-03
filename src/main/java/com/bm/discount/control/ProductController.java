@@ -57,4 +57,12 @@ public class ProductController {
     public void deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
     }
+
+    @GetMapping("/category/{categoryId}")
+    public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
+        // Ovde bi u realnom sistemu išao poziv repozitorijuma preko Service sloja
+        return productRepository.findAll().stream()
+                .filter(p -> p.getCategory().getCategoryId().equals(categoryId))
+                .toList();
+    }
 }

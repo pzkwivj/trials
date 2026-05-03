@@ -1,5 +1,6 @@
 package com.bm.discount.database.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class Company {
     @Column(nullable = false, unique = true) // unique=true jer smo dodali UNIQUE INDEX u bazi
     private String pib;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Product> products;
 

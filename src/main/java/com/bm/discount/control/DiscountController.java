@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/discounts")
@@ -45,9 +46,16 @@ public class DiscountController {
     @PutMapping("/{id}")
     public ResponseEntity<Discount> updateDiscount(@PathVariable Long id, @RequestBody Discount discountDetails) {
         return discountRepository.findById(id).map(discount -> {
+            // Usklađivanje sa POJO poljima (from_date, to_date, discounted_price)
             discount.setPercentage(discountDetails.getPercentage());
+            discount.setDiscountedPrice(discountDetails.getDiscountedPrice());
             discount.setStartDate(discountDetails.getStartDate());
             discount.setEndDate(discountDetails.getEndDate());
+
+            // Ažuriranje veza ako se promene proizvod ili firma
+            discount.setProduct(discountDetails.getProduct());
+            discount.setCompany(discountDetails.getCompany());
+
             return ResponseEntity.ok(discountRepository.save(discount));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -59,4 +67,12 @@ public class DiscountController {
             return ResponseEntity.noContent().build();
         }).orElse(ResponseEntity.notFound().build());
     }
+
+// ... unutar kontrolera ...
+    @GetMapping("/active")
+    public List<Discount> getActiveDiscounts() {
+        LocalDate today = LocalDate.now();
+        return discountRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(today, today);
+    }
+
 }

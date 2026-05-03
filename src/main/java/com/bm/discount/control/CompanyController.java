@@ -45,7 +45,11 @@ public class CompanyController {
     @PutMapping("/{id}")
     public ResponseEntity<Company> updateCompany(@PathVariable Long id, @RequestBody Company companyDetails) {
         return companyRepository.findById(id).map(company -> {
-            company.setName(companyDetails.getName());
+            // Usklađeno sa tvojim preimenovanim poljima u POJO klasi
+            company.setCompanyName(companyDetails.getCompanyName());
+            company.setPib(companyDetails.getPib());
+            company.setAddress(companyDetails.getAddress());
+
             return ResponseEntity.ok(companyRepository.save(company));
         }).orElse(ResponseEntity.notFound().build());
     }

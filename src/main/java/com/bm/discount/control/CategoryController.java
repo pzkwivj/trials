@@ -45,7 +45,8 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
         return categoryRepository.findById(id).map(category -> {
-            category.setName(categoryDetails.getName());
+            // Koristi setCategoryName umesto setName
+            category.setCategoryName(categoryDetails.getCategoryName());
             return ResponseEntity.ok(categoryRepository.save(category));
         }).orElse(ResponseEntity.notFound().build());
     }

@@ -1,6 +1,7 @@
 package com.bm.discount.database.pojo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
@@ -13,9 +14,12 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @NotBlank(message = "Naziv proizvoda je obavezan")
     @Column(name = "product_name", nullable = false) // Usklađeno sa NOT NULL
     private String productName;
 
+    @Min(value = 0, message = "Cena ne može biti negativna")
+    @NotNull(message = "Cena je obavezna")
     @Column(nullable = false) // Usklađeno sa NOT NULL
     private Double price;
 

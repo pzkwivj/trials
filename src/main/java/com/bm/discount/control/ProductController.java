@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = "http://localhost:3000") // Dozvoljava React-u pristup
 public class ProductController {
 
     private final ProductRepository productRepository;

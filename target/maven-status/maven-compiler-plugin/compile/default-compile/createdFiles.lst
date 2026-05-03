@@ -7,6 +7,7 @@ com\bm\discount\database\pojo\Category.class
 com\bm\discount\database\pojo\Company.class
 com\bm\discount\repo\CompanyRepository.class
 com\bm\discount\control\DiscountController.class
+com\bm\discount\exception\GlobalExceptionHandler.class
 com\bm\discount\control\CategoryController.class
 com\bm\discount\control\ProductController.class
 com\bm\discount\database\pojo\Product.class

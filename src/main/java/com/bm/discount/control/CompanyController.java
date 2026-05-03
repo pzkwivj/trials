@@ -6,9 +6,11 @@ package com.bm.discount.control;
 
 import com.bm.discount.database.pojo.Company;
 import com.bm.discount.repo.CompanyRepository;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/companies")
+@CrossOrigin(origins = "http://localhost:3000") // Dozvoljava React-u pristup
 public class CompanyController {
 
     @Autowired
@@ -38,7 +41,7 @@ public class CompanyController {
     }
 
     @PostMapping
-    public Company createCompany(@RequestBody Company company) {
+    public Company createCompany(@Valid @RequestBody Company company) {
         return companyRepository.save(company);
     }
 

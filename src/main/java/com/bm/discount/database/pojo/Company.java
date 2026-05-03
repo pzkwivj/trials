@@ -11,7 +11,11 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long companyId;
 
+    @Column(name = "company_name", nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String pib;   // must not be null        
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Product> products;
@@ -39,5 +43,13 @@ public class Company {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public String getPib() {
+        return pib;
+    }
+
+    public void setPib(String pib) {
+        this.pib = pib;
     }
 }

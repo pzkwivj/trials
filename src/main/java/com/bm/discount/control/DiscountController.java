@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/discounts")
-@CrossOrigin(origins = "http://localhost:3000") // Dozvoljava React-u pristup
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class DiscountController {
 
     @Autowired

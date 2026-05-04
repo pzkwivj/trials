@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/companies")
-@CrossOrigin(origins = "http://localhost:3000") // Dozvoljava React-u pristup
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class CompanyController {
 
     @Autowired

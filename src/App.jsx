@@ -1,48 +1,35 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import CategoriesPage from './pages/CategoriesPage';
+import ProductsPage from './pages/ProductsPage';
+import DiscountsPage from './pages/DiscountsPage';
+import CompaniesPage from './pages/CompaniesPage';
+
 
 function App() {
-  const [categories, setCategories] = useState([])
-  const [error, setError] = useState(null)
-
-  // useEffect se pokreće čim se komponenta učita na ekran
-  useEffect(() => {
-    axios.get('http://localhost:8080/categories')
-      .then(response => {
-        setCategories(response.data) // Ubacujemo podatke iz Springa u stanje
-      })
-      .catch(err => {
-        console.error("Greška pri povlačenju:", err)
-        setError("Nije moguće učitati kategorije. Proveri da li je Spring pokrenut!")
-      })
-  }, [])
-
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>Lista Kategorija</h1>
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <table border="1" cellPadding="10" style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f2f2f2' }}>
-            <th>ID</th>
-            <th>Naziv Kategorije</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map(cat => (
-            <tr key={cat.categoryId}>
-              <td>{cat.categoryId}</td>
-              <td>{cat.categoryName}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      
-      {categories.length === 0 && !error && <p>Nema pronađenih kategorija u bazi.</p>}
-    </div>
-  )
+    <Router>
+      <div style={{ fontFamily: 'Arial' }}>
+        {/* Navigacioni meni koji je uvek vidljiv */}
+        <nav style={{ padding: '20px', backgroundColor: '#333', color: '#fff' }}>
+          <Link to="/categories" style={{ color: 'white', marginRight: '20px' }}>Kategorije</Link>
+          <Link to="/products" style={{ color: 'white', marginRight: '20px' }}>Proizvodi</Link>
+          <Link to="/companies" style={{ color: 'white', marginRight: '20px' }}>Kompanije</Link>
+          <Link to="/discounts" style={{ color: 'white' }}>Popusti</Link>
+        </nav>
+
+        {/* Mesto gde se sadržaj menja na klik */}
+        <div style={{ padding: '20px' }}>
+          <Routes>
+            <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/companies" element={<CompaniesPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/discounts" element={<DiscountsPage />} />
+            <Route path="/" element={<h2>Dobrodošli! Izaberite opciju iz menija.</h2>} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -6,6 +6,7 @@ package com.bm.discount.control;
 
 import com.bm.discount.database.pojo.Discount;
 import com.bm.discount.repo.DiscountRepository;
+import com.bm.discount.service.DiscountService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,56 +26,53 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class DiscountController {
 
-    @Autowired
-    private DiscountRepository discountRepository;
+    private final DiscountService discountService;
+
+    // Ubrizgavamo Service umesto Repository-ja
+    public DiscountController(DiscountService discountService) {
+        this.discountService = discountService;
+    }
 
     @GetMapping
     public List<Discount> getAllDiscounts() {
-        return discountRepository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Discount> getDiscountById(@PathVariable Long id) {
-        return discountRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return discountService.getAll();
     }
 
     @PostMapping
     public Discount createDiscount(@RequestBody Discount discount) {
-        return discountRepository.save(discount);
+        // Sada će Service sam izračunati cenu, ti samo pošalji procenat u JSON-u
+        return discountService.save(discount);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Discount> getDiscountById(@PathVariable Long id) {
+        Discount discount = discountService.findById(id);
+        if (discount != null) {
+            return ResponseEntity.ok(discount);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Discount> updateDiscount(@PathVariable Long id, @RequestBody Discount discountDetails) {
-        return discountRepository.findById(id).map(discount -> {
-            // Usklađivanje sa POJO poljima (from_date, to_date, discounted_price)
-            discount.setPercentage(discountDetails.getPercentage());
-            discount.setDiscountedPrice(discountDetails.getDiscountedPrice());
-            discount.setStartDate(discountDetails.getStartDate());
-            discount.setEndDate(discountDetails.getEndDate());
-
-            // Ažuriranje veza ako se promene proizvod ili firma
-            discount.setProduct(discountDetails.getProduct());
-            discount.setCompany(discountDetails.getCompany());
-
-            return ResponseEntity.ok(discountRepository.save(discount));
-        }).orElse(ResponseEntity.notFound().build());
+        Discount updated = discountService.update(id, discountDetails);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
-        return discountRepository.findById(id).map(discount -> {
-            discountRepository.delete(discount);
+        if (discountService.deleteById(id)) {
             return ResponseEntity.noContent().build();
-        }).orElse(ResponseEntity.notFound().build());
+        }
+        return ResponseEntity.notFound().build();
     }
 
 // ... unutar kontrolera ...
     @GetMapping("/active")
     public List<Discount> getActiveDiscounts() {
         LocalDate today = LocalDate.now();
-        return discountRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(today, today);
+        return discountService.findActive(today);
     }
 
 }

@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.bm.discount.control;
 
 import com.bm.discount.database.pojo.Product;
-import com.bm.discount.repo.ProductRepository;
+import com.bm.discount.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,55 +12,59 @@ import java.util.List;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     // GET all products
     @GetMapping
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productService.getAll();
     }
 
-    // GET product by ID
+    // GET product by ID - Korišćenje ResponseEntity je čistija praksa
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productRepository.findById(id).orElse(null);
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        return productService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // CREATE new product
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
-        return productRepository.save(product);
+        return productService.save(product);
     }
 
-    // UPDATE product
+    // UPDATE product - Sva logika prebačena na servis
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        return productRepository.findById(id)
-                .map(product -> {
-                    product.setProductName(productDetails.getProductName());
-                    product.setPrice(productDetails.getPrice());
-                    product.setCompany(productDetails.getCompany());
-                    product.setCategory(productDetails.getCategory());
-                    return productRepository.save(product);
-                })
-                .orElse(null);
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        Product updatedProduct = productService.update(id, productDetails);
+        if (updatedProduct != null) {
+            return ResponseEntity.ok(updatedProduct);
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    // DELETE product
+    // DELETE product - Vraća odgovarajući HTTP status u zavisnosti od uspeha
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        if (productService.deleteById(id)) {
+            return ResponseEntity.noContent().build(); // Status 204
+        }
+        return ResponseEntity.notFound().build(); // Status 404
     }
 
+    // GET products by category
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
-        // Ovde bi u realnom sistemu išao poziv repozitorijuma preko Service sloja
-        return productRepository.findAll().stream()
-                .filter(p -> p.getCategory().getCategoryId().equals(categoryId))
+        // Umesto povlačenja svih pa filtriranja, u ProductService i ProductRepository 
+        // možeš uvesti metodu findByCategory(Category category) radi brzine.
+        // Za sada tvoje rešenje radi, ali evo kako da ga ostaviš preko servisa:
+        return productService.getAll().stream()
+                .filter(p -> p.getCategory() != null && p.getCategory().getCategoryId().equals(categoryId))
                 .toList();
     }
 }

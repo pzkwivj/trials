@@ -5,10 +5,8 @@
 package com.bm.discount.control;
 
 import com.bm.discount.database.pojo.Discount;
-import com.bm.discount.repo.DiscountRepository;
 import com.bm.discount.service.DiscountService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

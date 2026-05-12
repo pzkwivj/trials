@@ -5,9 +5,8 @@
 package com.bm.discount.control;
 
 import com.bm.discount.database.pojo.Category;
-import com.bm.discount.repo.CategoryRepository;
+import com.bm.discount.service.CategoryService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,40 +23,46 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class CategoryController {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        return categoryService.getAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        return categoryRepository.findById(id)
+        return categoryService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Category createCategory(@RequestBody Category category) {
-        return categoryRepository.save(category);
+        return categoryService.save(category);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
-        return categoryRepository.findById(id).map(category -> {
-            // Koristi setCategoryName umesto setName
-            category.setCategoryName(categoryDetails.getCategoryName());
-            return ResponseEntity.ok(categoryRepository.save(category));
-        }).orElse(ResponseEntity.notFound().build());
+        Category category = categoryService.update(id, categoryDetails);
+        if (category != null) {
+            return ResponseEntity.ok(category);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
-        return categoryRepository.findById(id).map(category -> {
-            categoryRepository.delete(category);
+
+        if (categoryService.deleteById(id)) {
             return ResponseEntity.noContent().build();
-        }).orElse(ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

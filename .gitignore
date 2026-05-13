@@ -22,3 +22,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+/target/Discount-1.0-SNAPSHOT.jar
+/target/Discount-1.0-SNAPSHOT.jar
+/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/.gitignore
+/target/Discount-1.0-SNAPSHOT.jar
+/target/classes/com/bm/discount/control/CategoryController.class
+/target/classes/com/bm/discount/control/CompanyController.class
+/target/classes/com/bm/discount/control/DiscountController.class
+/target/classes/com/bm/discount/control/ProductController.class
+/target/classes/com/bm/discount/service/CategoryService.class
+/target/classes/com/bm/discount/service/CompanyService.class
+/target/classes/com/bm/discount/service/DiscountService.class
+/target/classes/com/bm/discount/service/ProductService.class
+/target/Discount-1.0-SNAPSHOT.jar

@@ -3,43 +3,94 @@ import axios from 'axios';
 
 function CategoriesPage() {
   const [categories, setCategories] = useState([]);
+  const [categoryName, setCategoryName] = useState('');
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchCategories = () => {
     axios.get('http://localhost:8080/categories')
-      .then(response => {
-        setCategories(response.data);
-      })
-      .catch(err => {
-        console.error("Greška:", err);
-        setError("Nije moguće učitati kategorije.");
-      });
+      .then(res => setCategories(res.data))
+      .catch(() => setError("Greška pri učitavanju kategorija."));
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!categoryName.trim()) return;
+
+    axios.post('http://localhost:8080/categories', { categoryName })
+      .then(() => {
+        setCategoryName('');
+        fetchCategories(); // Osvežava tabelu odmah nakon unosa
+      })
+      .catch(err => {
+        // Ako backend vrati validacionu grešku (npr. Blank), prikazaće se ovde
+        const msg = err.response?.data?.categoryName || "Greška pri čuvanju.";
+        setError(msg);
+      });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Da li ste sigurni da želite da obrišete ovu kategoriju?")) {
+      axios.delete(`http://localhost:8080/categories/${id}`)
+        .then(() => fetchCategories())
+        .catch(() => setError("Nije moguće obrisati kategoriju. Možda je povezana sa proizvodom."));
+    }
+  };
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>Lista Kategorija</h1>
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <table border="1" cellPadding="10" style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f2f2f2' }}>
-            <th>ID</th>
-            <th>Naziv Kategorije</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map(cat => (
-            <tr key={cat.categoryId}>
-              <td>{cat.categoryId}</td>
-              <td>{cat.categoryName}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      
-      {categories.length === 0 && !error && <p>Nema pronađenih kategorija u bazi.</p>}
+    <div className="container mt-4">
+      <div className="row">
+        {/* Kolona za Formu */}
+        <div className="col-md-4">
+          <div className="card p-3 shadow-sm">
+            <h4 className="mb-3">Nova Kategorija</h4>
+            {error && <div className="alert alert-danger p-2">{error}</div>}
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Naziv kategorije</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  placeholder="npr. Electronics"
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-100">Sačuvaj</button>
+            </form>
+          </div>
+        </div>
+
+        {/* Kolona za Tabelu */}
+        <div className="col-md-8">
+          <div className="card p-3 shadow-sm">
+            <h4 className="mb-3">Lista Kategorija</h4>
+            <table className="table table-striped table-bordered">
+              <thead className="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Naziv Kategorije</th>
+                  <th>Akcija</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.map(cat => (
+                  <tr key={cat.categoryId}>
+                    <td>{cat.categoryId}</td>
+                    <td>{cat.categoryName}</td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(cat.categoryId)}>Obriši</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

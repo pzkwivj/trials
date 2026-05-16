@@ -1,7 +1,9 @@
 package com.bm.discount.service;
 
 import com.bm.discount.database.pojo.Discount;
+import com.bm.discount.database.pojo.Product;
 import com.bm.discount.repo.DiscountRepository;
+import com.bm.discount.repo.ProductRepository;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -10,9 +12,11 @@ import java.util.List;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
+    private final ProductRepository productRepository;
 
-    public DiscountService(DiscountRepository discountRepository) {
+    public DiscountService(DiscountRepository discountRepository, ProductRepository productRepository) {
         this.discountRepository = discountRepository;
+        this.productRepository = productRepository;
     }
 
     public List<Discount> getAll() {
@@ -28,8 +32,14 @@ public class DiscountService {
 
         if (discount.getStartDate() != null && discount.getStartDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("Datum početka ne može biti u prošlosti !");
-
         }
+
+        Product realProduct = productRepository.findById(discount.getProduct().getProductId())
+                .orElseThrow(() -> new RuntimeException("Proizvod sa datim ID-jem ne postoji!"));
+
+        // Postavljamo kompletan proizvod nazad u discount objekat
+        discount.setProduct(realProduct);
+
         if (discount.getProduct() != null && discount.getPercentage() != null) {
             double originalPrice = discount.getProduct().getPrice();
             double percentage = discount.getPercentage();

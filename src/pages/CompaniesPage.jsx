@@ -35,6 +35,14 @@ function CompaniesPage() {
       });
   };
 
+  const handleDelete = (id) => {
+    if (window.confirm("Da li ste sigurni da želite da obrišete ovu kompaniju?")) {
+      axios.delete(`http://localhost:8080/companies/${id}`)
+        .then(() => fetchCompanies())
+        .catch(() => setError("Nije moguće obrisati kompaniju. Možda ima aktivne proizvode."));
+    }
+  };
+
   return (
     <div className="container mt-4">
       <div className="row">
@@ -45,29 +53,29 @@ function CompaniesPage() {
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
                 <label className="form-label">Naziv</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
+                <input
+                  type="text"
+                  className="form-control"
                   value={formData.companyName}
-                  onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                 />
               </div>
               <div className="mb-2">
                 <label className="form-label">PIB (9 cifara)</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
+                <input
+                  type="text"
+                  className="form-control"
                   value={formData.pib}
-                  onChange={(e) => setFormData({...formData, pib: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, pib: e.target.value })}
                 />
               </div>
               <div className="mb-3">
                 <label className="form-label">Adresa</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
+                <input
+                  type="text"
+                  className="form-control"
                   value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 />
               </div>
               <button type="submit" className="btn btn-success w-100">Sačuvaj</button>
@@ -85,6 +93,7 @@ function CompaniesPage() {
                   <th>Naziv</th>
                   <th>PIB</th>
                   <th>Adresa</th>
+                  <th>Akcija</th>
                 </tr>
               </thead>
               <tbody>
@@ -94,6 +103,9 @@ function CompaniesPage() {
                     <td>{c.companyName}</td>
                     <td>{c.pib}</td>
                     <td>{c.address}</td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.companyId)}>Obriši</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

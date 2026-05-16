@@ -32,6 +32,14 @@ function CategoriesPage() {
       });
   };
 
+  const handleDelete = (id) => {
+    if (window.confirm("Da li ste sigurni da želite da obrišete ovu kategoriju?")) {
+      axios.delete(`http://localhost:8080/categories/${id}`)
+        .then(() => fetchCategories())
+        .catch(() => setError("Nije moguće obrisati kategoriju. Možda je povezana sa proizvodom."));
+    }
+  };
+
   return (
     <div className="container mt-4">
       <div className="row">
@@ -43,11 +51,11 @@ function CategoriesPage() {
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Naziv kategorije</label>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  value={categoryName} 
-                  onChange={(e) => setCategoryName(e.target.value)} 
+                <input
+                  type="text"
+                  className="form-control"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
                   placeholder="npr. Electronics"
                 />
               </div>
@@ -65,6 +73,7 @@ function CategoriesPage() {
                 <tr>
                   <th>ID</th>
                   <th>Naziv Kategorije</th>
+                  <th>Akcija</th>
                 </tr>
               </thead>
               <tbody>
@@ -72,6 +81,9 @@ function CategoriesPage() {
                   <tr key={cat.categoryId}>
                     <td>{cat.categoryId}</td>
                     <td>{cat.categoryName}</td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(cat.categoryId)}>Obriši</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

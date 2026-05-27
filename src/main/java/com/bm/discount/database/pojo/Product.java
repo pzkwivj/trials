@@ -34,7 +34,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Discount> discounts;
 
-        public Long getProductId() {
+    @Column(name = "product_url", length = 500)
+    private String productUrl;
+
+    public Long getProductId() {
         return productId;
     }
 
@@ -81,5 +84,12 @@ public class Product {
     public void setDiscounts(List<Discount> discounts) {
         this.discounts = discounts;
     }
-}
 
+    public String getProductUrl() {
+        return productUrl;
+    }
+
+    public void setProductUrl(String productUrl) {
+        this.productUrl = productUrl;
+    }
+}

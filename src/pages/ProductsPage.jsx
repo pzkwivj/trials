@@ -10,6 +10,7 @@ function ProductsPage() {
   const [formData, setFormData] = useState({
     productName: '',
     price: '',
+    productUrl: '',
     category: { categoryId: '' },
     company: { companyId: '' }
   });
@@ -53,6 +54,7 @@ function ProductsPage() {
         setFormData({
           productName: '',
           price: '',
+          productUrl: '',
           category: { categoryId: '' },
           company: { companyId: '' }
         });
@@ -111,6 +113,18 @@ function ProductsPage() {
               </div>
 
               <div className="mb-2">
+                <label className="form-label">Link do proizvoda (URL)</label>
+                <input
+                  type="url"
+                  className="form-control"
+                  value={formData.productUrl}
+                  onChange={(e) => setFormData({ ...formData, productUrl: e.target.value })}
+                  placeholder="https://example.com"
+                />
+              </div>
+
+
+              <div className="mb-2">
                 <label className="form-label">Kategorija</label>
                 <select
                   className="form-select"
@@ -165,6 +179,7 @@ function ProductsPage() {
                   <th>ID</th>
                   <th>Naziv</th>
                   <th>Cena</th>
+                  <th>Link</th>
                   <th>Kategorija</th>
                   <th>Kompanija</th>
                   <th>Akcija</th>
@@ -176,6 +191,15 @@ function ProductsPage() {
                     <td>{p.productId}</td>
                     <td>{p.productName}</td>
                     <td>{p.price?.toFixed(2)} RSD</td>
+                    <td>
+                      {p.productUrl ? (
+                        <a href={p.productUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline-info btn-sm">
+                          Poseti sajt
+                        </a>
+                      ) : (
+                        <span className="text-muted">Nema linka</span>
+                      )}
+                    </td>
                     <td>{p.category?.categoryName || 'N/A'}</td>
                     <td>{p.company?.companyName || 'N/A'}</td>
                     <td>

@@ -36,6 +36,7 @@ public class ProductService {
             product.setPrice(details.getPrice());
             product.setCategory(details.getCategory());
             product.setCompany(details.getCompany());
+            product.setProductUrl(details.getProductUrl());
             return productRepository.save(product);
         }).orElse(null);
     }

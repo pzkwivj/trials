@@ -18,12 +18,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // GET all products
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAll();
-    }
-
     // GET product by ID - Korišćenje ResponseEntity je čistija praksa
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
@@ -66,5 +60,12 @@ public class ProductController {
         return productService.getAll().stream()
                 .filter(p -> p.getCategory() != null && p.getCategory().getCategoryId().equals(categoryId))
                 .toList();
+    }
+
+    @GetMapping
+    public List<Product> getProducts(
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false,defaultValue = "productId") String sortBy) {
+        return productService.getAllProducts(search, sortBy);
     }
 }

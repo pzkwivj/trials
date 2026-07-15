@@ -6,33 +6,41 @@ function ProductsPage() {
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
 
-  // Stanje za formu (povezujemo sa objektima koje Spring očekuje)
+  // Nova stanja za pretragu i sortiranje
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('productId');
+
+  // Stanje za formu
   const [formData, setFormData] = useState({
     productName: '',
     price: '',
+    productUrl: '',
     category: { categoryId: '' },
     company: { companyId: '' }
   });
 
   const [error, setError] = useState(null);
 
-  // Funkcija za osvežavanje tabele proizvoda
+  // Ažurirana funkcija koja šalje parametre backendu
   const fetchProducts = () => {
-    axios.get('http://localhost:8080/products')
+    axios.get('http://localhost:8080/products', {
+      params: { search, sortBy }
+    })
       .then(res => setProducts(Array.isArray(res.data) ? res.data : []))
       .catch(() => setError("Greška pri učitavanju proizvoda."));
   };
 
-  // Učitavamo sve podatke pri pokretanju stranice
+  // useEffect reaguje na svaku promenu u poljima za pretragu i sortiranje
   useEffect(() => {
     fetchProducts();
+  }, [search, sortBy]);
 
-    // Vučemo kategorije za padajući meni
+  // Podaci za padajuće menije se učitavaju samo jednom na početku
+  useEffect(() => {
     axios.get('http://localhost:8080/categories')
       .then(res => setCategories(res.data))
       .catch(() => console.error("Greška sa kategorijama"));
 
-    // Vučemo kompanije za padajući meni
     axios.get('http://localhost:8080/companies')
       .then(res => setCompanies(res.data))
       .catch(() => console.error("Greška sa kompanijama"));
@@ -41,7 +49,6 @@ function ProductsPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validacija na frontendu: proveravamo da li je sve izabrano
     if (!formData.category.categoryId || !formData.company.companyId) {
       setError("Morate izabrati kategoriju i kompaniju!");
       return;
@@ -49,15 +56,15 @@ function ProductsPage() {
 
     axios.post('http://localhost:8080/products', formData)
       .then(() => {
-        // Resetujemo formu nakon uspešnog unosa
         setFormData({
           productName: '',
           price: '',
+          productUrl: '',
           category: { categoryId: '' },
           company: { companyId: '' }
         });
         setError(null);
-        fetchProducts(); // Osveži tabelu proizvoda
+        fetchProducts(); 
       })
       .catch(err => {
         const errors = err.response?.data;
@@ -111,6 +118,17 @@ function ProductsPage() {
               </div>
 
               <div className="mb-2">
+                <label className="form-label">Link do proizvoda (URL)</label>
+                <input
+                  type="url"
+                  className="form-control"
+                  value={formData.productUrl}
+                  onChange={(e) => setFormData({ ...formData, productUrl: e.target.value })}
+                  placeholder="https://example.com"
+                />
+              </div>
+
+              <div className="mb-2">
                 <label className="form-label">Kategorija</label>
                 <select
                   className="form-select"
@@ -155,16 +173,43 @@ function ProductsPage() {
           </div>
         </div>
 
-        {/* Kolona za Tabelu */}
+        {/* Kolona za Tabelu sa dodatim filterima */}
         <div className="col-md-8">
-          <div className="card p-3 shadow-sm">
+          <div className="card p-3 shadow-sm mb-4">
+            
+            {/* NOVI BLOK: Kontrole za pretragu i sortiranje u istom redu */}
+            <div className="row g-2 mb-3 align-items-center">
+              <div className="col-md-7">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Pretraži proizvode po nazivu..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              <div className="col-md-5">
+                <select
+                  className="form-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="productId">Podrazumevano (ID)</option>
+                  <option value="priceAsc">Cena: Od najjeftinijeg</option>
+                  <option value="priceDesc">Cena: Od najskupljeg</option>
+                  <option value="nameAsc">Naziv: A-Z</option>
+                </select>
+              </div>
+            </div>
+
             <h4 className="mb-3">Lista Proizvoda</h4>
-            <table className="table table-striped table-bordered">
+            <table className="table table-striped table-bordered mb-0">
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>
                   <th>Naziv</th>
                   <th>Cena</th>
+                  <th>Link</th>
                   <th>Kategorija</th>
                   <th>Kompanija</th>
                   <th>Akcija</th>
@@ -176,6 +221,15 @@ function ProductsPage() {
                     <td>{p.productId}</td>
                     <td>{p.productName}</td>
                     <td>{p.price?.toFixed(2)} RSD</td>
+                    <td>
+                      {p.productUrl ? (
+                        <a href={p.productUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline-info btn-sm">
+                          Poseti sajt
+                        </a>
+                      ) : (
+                        <span className="text-muted">Nema linka</span>
+                      )}
+                    </td>
                     <td>{p.category?.categoryName || 'N/A'}</td>
                     <td>{p.company?.companyName || 'N/A'}</td>
                     <td>
@@ -185,7 +239,7 @@ function ProductsPage() {
                 ))}
               </tbody>
             </table>
-            {products.length === 0 && <p className="text-muted">Nema unetih proizvoda.</p>}
+            {products.length === 0 && <p className="text-muted mt-3 mb-0">Nema unetih ili pronađenih proizvoda.</p>}
           </div>
         </div>
       </div>

@@ -6,7 +6,12 @@ function DiscountsPage() {
   const [products, setProducts] = useState([]);
   const [companies, setCompanies] = useState([]);
 
-  // Stanje za formu (ne šaljemo discountedPrice, to radi backend Service!)
+  // ADMIN SISTEM STANJA
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Stanje za formu
   const [formData, setFormData] = useState({
     percentage: '',
     startDate: '',
@@ -17,6 +22,28 @@ function DiscountsPage() {
 
   const [error, setError] = useState(null);
 
+  // Funkcija za logovanje na frontendu
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    if (adminPassword === '123') {
+      setIsAdmin(true);
+      setShowLoginModal(false);
+      setError(null);
+    } else {
+      alert("Pogrešna šifra!");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAdmin(false);
+    setAdminPassword('');
+  };
+
+  // Pomoćna funkcija za slanje tokena u zaglavlju (Šaljemo '123' direktno ako je admin ulogovan)
+  const getAdminHeaders = () => {
+    return { headers: { 'X-Admin-Token': isAdmin ? adminPassword : '' } };
+  };
+
   const fetchDiscounts = () => {
     axios.get('http://localhost:8080/discounts')
       .then(res => setDiscounts(Array.isArray(res.data) ? res.data : []))
@@ -26,12 +53,10 @@ function DiscountsPage() {
   useEffect(() => {
     fetchDiscounts();
 
-    // Vučemo proizvode za padajući meni
     axios.get('http://localhost:8080/products')
       .then(res => setProducts(res.data))
       .catch(() => console.error("Greška sa proizvodima"));
 
-    // Vučemo kompanije za padajući meni
     axios.get('http://localhost:8080/companies')
       .then(res => setCompanies(res.data))
       .catch(() => console.error("Greška sa kompanijama"));
@@ -45,7 +70,7 @@ function DiscountsPage() {
       return;
     }
 
-    axios.post('http://localhost:8080/discounts', formData)
+    axios.post('http://localhost:8080/discounts', formData, getAdminHeaders())
       .then(() => {
         setFormData({
           percentage: '',
@@ -55,15 +80,14 @@ function DiscountsPage() {
           company: { companyId: '' }
         });
         setError(null);
-        fetchDiscounts(); // Osveži tabelu
+        fetchDiscounts(); 
       })
       .catch(err => {
-        // Ovde hvatamo i validaciju datuma iz našeg DiscountService-a!
         const serverError = err.response?.data;
         if (typeof serverError === 'object') {
           setError(Object.values(serverError).join(', '));
         } else if (typeof serverError === 'string') {
-          setError(serverError); // Prikazuje npr. "Datum završetka ne može biti pre..."
+          setError(serverError); 
         } else {
           setError("Greška pri čuvanju popusta.");
         }
@@ -72,105 +96,148 @@ function DiscountsPage() {
 
   const handleDelete = (id) => {
     if (window.confirm("Da li ste sigurni da želite da uklonite ovaj popust?")) {
-      axios.delete(`http://localhost:8080/discounts/${id}`)
-        .then(() => fetchDiscounts())
-        .catch(() => setError("Greška pri brisanju popusta."));
+      axios.delete(`http://localhost:8080/discounts/${id}`, getAdminHeaders())
+        .then(() => {
+          setError(null);
+          fetchDiscounts();
+        })
+        .catch(err => {
+          setError(err.response?.data || "Greška pri brisanju popusta.");
+        });
     }
   };
 
   return (
     <div className="container mt-4">
-      <div className="row">
-        {/* Kolona za Formu */}
-        <div className="col-md-4">
-          <div className="card p-3 shadow-sm">
-            <h4 className="mb-3">Novi Popust</h4>
-            {error && <div className="alert alert-danger p-2">{error}</div>}
+      {/* Gornja traka sa Login / Logout dugmetom */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Upravljanje Popustima</h2>
+        {isAdmin ? (
+          <button className="btn btn-outline-danger" onClick={handleLogout}>Odjavi se (Admin)</button>
+        ) : (
+          <button className="btn btn-outline-primary" onClick={() => setShowLoginModal(true)}>Prijava za Admina</button>
+        )}
+      </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-2">
-                <label className="form-label">Procenat popusta (%)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={formData.percentage}
-                  onChange={(e) => setFormData({ ...formData, percentage: e.target.value })}
+      {/* Prozor za unos šifre (Modal) */}
+      {showLoginModal && (
+        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content p-3">
+              <h5>Unesite Admin Šifru</h5>
+              <form onSubmit={handleLoginSubmit}>
+                <input 
+                  type="password" 
+                  className="form-control mb-3" 
+                  value={adminPassword} 
+                  onChange={(e) => setAdminPassword(e.target.value)} 
+                  placeholder="Šifra..."
                   required
                 />
-              </div>
-
-              <div className="mb-2">
-                <label className="form-label">Datum početka</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="mb-2">
-                <label className="form-label">Datum završetka</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="mb-2">
-                <label className="form-label">Proizvod</label>
-                <select
-                  className="form-select"
-                  value={formData.product.productId}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    product: { productId: e.target.value }
-                  })}
-                  required
-                >
-                  <option value="">-- Izaberi proizvod --</option>
-                  {products.map(p => (
-                    <option key={p.productId} value={p.productId}>
-                      {p.productName} ({p.price?.toFixed(2)} RSD)
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Kompanija</label>
-                <select
-                  className="form-select"
-                  value={formData.company.companyId}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    company: { companyId: e.target.value }
-                  })}
-                  required
-                >
-                  <option value="">-- Izaberi kompaniju --</option>
-                  {companies.map(com => (
-                    <option key={com.companyId} value={com.companyId}>
-                      {com.companyName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button type="submit" className="btn btn-danger w-100">Aktiviraj Popust</button>
-            </form>
+                <div className="d-flex gap-2">
+                  <button type="submit" className="btn btn-success">Potvrdi</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginModal(false)}>Otkaži</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Kolona za Tabelu */}
-        <div className="col-md-8">
+      <div className="row">
+        {/* Kolona za Formu - VIDI SE SAMO AKO JE KORISNIK ADMIN */}
+        {isAdmin && (
+          <div className="col-md-4">
+            <div className="card p-3 shadow-sm mb-4">
+              <h4 className="mb-3">Novi Popust</h4>
+              {error && <div className="alert alert-danger p-2">{error}</div>}
+
+              <form onSubmit={handleSubmit}>
+                <div className="mb-2">
+                  <label className="form-label">Procenat popusta (%)</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={formData.percentage}
+                    onChange={(e) => setFormData({ ...formData, percentage: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Datum početka</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Datum završetka</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="mb-2">
+                  <label className="form-label">Proizvod</label>
+                  <select
+                    className="form-select"
+                    value={formData.product.productId}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      product: { productId: e.target.value }
+                    })}
+                    required
+                  >
+                    <option value="">-- Izaberi proizvod --</option>
+                    {products.map(p => (
+                      <option key={p.productId} value={p.productId}>
+                        {p.productName} ({p.price?.toFixed(2)} RSD)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Kompanija</label>
+                  <select
+                    className="form-select"
+                    value={formData.company.companyId}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      company: { companyId: e.target.value }
+                    })}
+                    required
+                  >
+                    <option value="">-- Izaberi kompaniju --</option>
+                    {companies.map(com => (
+                      <option key={com.companyId} value={com.companyId}>
+                        {com.companyName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button type="submit" className="btn btn-danger w-100">Aktiviraj Popust</button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Kolona za Tabelu - SADA JE PRAVILNO ZATVORENA I ŠIRI SE AKO KORISNIK NIJE ADMIN */}
+        <div className={isAdmin ? "col-md-8" : "col-md-12"}>
           <div className="card p-3 shadow-sm">
             <h4 className="mb-3">Lista Popusta</h4>
-            <table className="table table-striped table-bordered">
+            {error && !isAdmin && <div className="alert alert-danger p-2">{error}</div>}
+            <table className="table table-striped table-bordered mb-0">
               <thead className="table-dark">
                 <tr>
                   <th>Proizvod</th>
@@ -179,7 +246,7 @@ function DiscountsPage() {
                   <th>Nova Cena</th>
                   <th>Ušteda</th>
                   <th>Period Važenja</th>
-                  <th>Akcija</th>
+                  {isAdmin && <th>Akcija</th>}
                 </tr>
               </thead>
               <tbody>
@@ -198,15 +265,17 @@ function DiscountsPage() {
                         <small className="d-block">Od: {d.startDate}</small>
                         <small className="d-block">Do: {d.endDate}</small>
                       </td>
-                      <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(d.discountId)}>Ukloni</button>
-                      </td>
+                      {isAdmin && (
+                        <td>
+                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(d.discountId)}>Ukloni</button>
+                        </td>
+                      )}
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-            {discounts.length === 0 && <p className="text-muted">Trenutno nema unetih popusta.</p>}
+            {discounts.length === 0 && <p className="text-muted mt-3 mb-0">Trenutno nema unetih popusta.</p>}
           </div>
         </div>
       </div>
@@ -215,3 +284,4 @@ function DiscountsPage() {
 }
 
 export default DiscountsPage;
+

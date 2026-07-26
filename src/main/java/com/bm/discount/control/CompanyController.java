@@ -68,7 +68,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCompany(@PathVariable Long id, @RequestBody Company companyDetails, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+    public ResponseEntity<?> deleteCompany(@PathVariable Long id, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
         if (!sifra.equals(token)) {
             return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
         }

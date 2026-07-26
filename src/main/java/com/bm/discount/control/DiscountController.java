@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/discounts")
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class DiscountController {
 
     private final DiscountService discountService;
+    private final String sifra = "123";
 
     // Ubrizgavamo Service umesto Repository-ja
     public DiscountController(DiscountService discountService) {
@@ -37,9 +39,13 @@ public class DiscountController {
     }
 
     @PostMapping
-    public Discount createDiscount(@RequestBody Discount discount) {
+    public ResponseEntity<?> createDiscount(@RequestBody Discount discount, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         // Sada će Service sam izračunati cenu, ti samo pošalji procenat u JSON-u
-        return discountService.save(discount);
+        Discount savedDiscount = discountService.save(discount);
+        return ResponseEntity.ok(savedDiscount);
     }
 
     @GetMapping("/{id}")
@@ -53,13 +59,19 @@ public class DiscountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Discount> updateDiscount(@PathVariable Long id, @RequestBody Discount discountDetails) {
+    public ResponseEntity<?> updateDiscount(@PathVariable Long id, @RequestBody Discount discountDetails, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         Discount updated = discountService.update(id, discountDetails);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDiscount(@PathVariable Long id) {
+    public ResponseEntity<?> deleteDiscount(@PathVariable Long id, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         if (discountService.deleteById(id)) {
             return ResponseEntity.noContent().build();
         }

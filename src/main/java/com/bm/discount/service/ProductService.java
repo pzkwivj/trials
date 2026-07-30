@@ -5,6 +5,7 @@ import com.bm.discount.repo.ProductRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class ProductService {
@@ -47,5 +48,21 @@ public class ProductService {
             return true;
         }
         return false;
+    }
+
+    public List<Product> getAllProducts(String search, String sortBy) {
+        // Podrazumevano sortiranje je po ID-ju (rastuće)
+        Sort sort = Sort.by("productId").ascending();
+
+        if ("priceAsc".equals(sortBy)) {
+            sort = Sort.by("price").ascending();
+        } else if ("priceDesc".equals(sortBy)) {
+            sort = Sort.by("price").descending();
+        } else if ("nameAsc".equals(sortBy)) {
+            sort = Sort.by("productName").ascending();
+        }
+
+        // Ako je search prazan, poslaće se "" što će vratiti sve proizvode
+        return productRepository.findByProductNameContainingIgnoreCase(search, sort);
     }
 }

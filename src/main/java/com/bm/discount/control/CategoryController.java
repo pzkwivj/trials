@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final String sifra = "123";
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
@@ -42,12 +44,20 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.save(category);
+    public ResponseEntity<?> createCategory(@RequestBody Category category, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
+        Category savedCategory = categoryService.save(category);
+        return ResponseEntity.ok(savedCategory);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
+
         Category category = categoryService.update(id, categoryDetails);
         if (category != null) {
             return ResponseEntity.ok(category);
@@ -57,7 +67,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
 
         if (categoryService.deleteById(id)) {
             return ResponseEntity.noContent().build();

@@ -19,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Pronalazi proizvode čiji naziv sadrži određenu reč (npr. pretraga)
     List<Product> findByProductNameContainingIgnoreCase(String name);
+
+    // Traži proizvode čije ime sadrži uneti tekst, sortirano prema prosleđenom Sort objektu
+    List<Product> findByProductNameContainingIgnoreCase(String productName, org.springframework.data.domain.Sort sort);
 }

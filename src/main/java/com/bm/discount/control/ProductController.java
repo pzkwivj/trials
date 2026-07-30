@@ -13,15 +13,10 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final String sifra = "123";
 
     public ProductController(ProductService productService) {
         this.productService = productService;
-    }
-
-    // GET all products
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAll();
     }
 
     // GET product by ID - Korišćenje ResponseEntity je čistija praksa
@@ -34,13 +29,20 @@ public class ProductController {
 
     // CREATE new product
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.save(product);
+    public ResponseEntity<?> createProduct(@RequestBody Product product, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
+        Product savedProduct = productService.save(product);
+        return ResponseEntity.ok(savedProduct);
     }
 
     // UPDATE product - Sva logika prebačena na servis
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product productDetails, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         Product updatedProduct = productService.update(id, productDetails);
         if (updatedProduct != null) {
             return ResponseEntity.ok(updatedProduct);
@@ -50,7 +52,10 @@ public class ProductController {
 
     // DELETE product - Vraća odgovarajući HTTP status u zavisnosti od uspeha
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         if (productService.deleteById(id)) {
             return ResponseEntity.noContent().build(); // Status 204
         }
@@ -66,5 +71,12 @@ public class ProductController {
         return productService.getAll().stream()
                 .filter(p -> p.getCategory() != null && p.getCategory().getCategoryId().equals(categoryId))
                 .toList();
+    }
+
+    @GetMapping
+    public List<Product> getProducts(
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false, defaultValue = "productId") String sortBy) {
+        return productService.getAllProducts(search, sortBy);
     }
 }

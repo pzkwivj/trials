@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final String sifra = "123";
 
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
@@ -45,12 +47,19 @@ public class CompanyController {
     }
 
     @PostMapping
-    public Company createCompany(@Valid @RequestBody Company company) {
-        return companyService.save(company);
+    public ResponseEntity<?> createCompany(@Valid @RequestBody Company company, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
+        Company savedCompany = companyService.save(company);
+        return ResponseEntity.ok(savedCompany);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Company> updateCompany(@PathVariable Long id, @RequestBody Company companyDetails) {
+    public ResponseEntity<?> updateCompany(@PathVariable Long id, @RequestBody Company companyDetails, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         Company company = companyService.update(id, companyDetails);
         if (company != null) {
             return ResponseEntity.ok(company);
@@ -59,7 +68,10 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCompany(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCompany(@PathVariable Long id, @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+        if (!sifra.equals(token)) {
+            return ResponseEntity.status(403).body("Pristup odbijen. Niste administrator!");
+        }
         if (companyService.deleteById(id)) {
             return ResponseEntity.noContent().build();
         } else {

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react'; // Dodaj useContext
+import { AdminContext } from '../context/AdminContext'; // Uvezi kontekst
 import axios from 'axios';
 
 function ProductsPage() {
@@ -7,9 +8,7 @@ function ProductsPage() {
   const [companies, setCompanies] = useState([]);
 
   // ADMIN SISTEM STANJA
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [showLoginModal, setShowLoginModal] = useState(false);
+const { isAdmin, adminPassword } = useContext(AdminContext);
 
   // Stanja za filtere i formu
   const [search, setSearch] = useState('');
@@ -23,26 +22,10 @@ function ProductsPage() {
   });
   const [error, setError] = useState(null);
 
-  // Funkcija za logovanje na frontendu
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    if (adminPassword === '123') { // Mora biti ista šifra kao na backendu
-      setIsAdmin(true);
-      setShowLoginModal(false);
-      setError(null);
-    } else {
-      alert("Pogrešna šifra!");
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAdmin(false);
-    setAdminPassword('');
-  };
 
   // Pomoćna funkcija za slanje zahteva sa Admin tokenom u headeru
   const getAdminHeaders = () => {
-    return { headers: { 'X-Admin-Token': adminPassword } };
+    return { headers: { 'X-Admin-Token': isAdmin ? adminPassword : '' } };
   };
 
   const fetchProducts = () => {
@@ -88,41 +71,6 @@ function ProductsPage() {
 
   return (
     <div className="container mt-4">
-      {/* Gornja traka sa Login / Logout dugmetom */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Sistem za popuste</h2>
-        {isAdmin ? (
-          <button className="btn btn-outline-danger" onClick={handleLogout}>Odjavi se (Admin)</button>
-        ) : (
-          <button className="btn btn-outline-primary" onClick={() => setShowLoginModal(true)}>Prijava za Admina</button>
-        )}
-      </div>
-
-      {/* Prozor za unos šifre (Pojavljuje se na klik Prijava) */}
-      {showLoginModal && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content p-3">
-              <h5>Unesite Admin Šifru</h5>
-              <form onSubmit={handleLoginSubmit}>
-                <input 
-                  type="password" 
-                  className="form-control mb-3" 
-                  value={adminPassword} 
-                  onChange={(e) => setAdminPassword(e.target.value)} 
-                  placeholder="Šifra..."
-                  required
-                />
-                <div className="d-flex gap-2">
-                  <button type="submit" className="btn btn-success">Potvrdi</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginModal(false)}>Otkaži</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="row">
         {/* Kolona za Formu - PRIKAZUJE SE SAMO AKO JE KORISNIK ADMIN */}
         {isAdmin && (

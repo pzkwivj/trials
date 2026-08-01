@@ -67,7 +67,7 @@ function CategoriesPage() {
         {/* Kolona za Formu - VIDI SE SAMO AKO JE KORISNIK ADMIN */}
         {isAdmin && (
           <div className="col-md-4">
-            <div className="card p-3 shadow-sm mb-4">
+            <div className="custom-card">
               <h4 className="mb-3">Nova Kategorija</h4>
               {error && <div className="alert alert-danger p-2">{error}</div>}
               <form onSubmit={handleSubmit}>
@@ -75,13 +75,13 @@ function CategoriesPage() {
                   <label className="form-label">Naziv kategorije</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                     placeholder="npr. Electronics"
                   />
                 </div>
-                <button type="submit" className="btn btn-primary w-100">Sačuvaj</button>
+                <button type="submit" className="btn btn-primary w-100 custom-btn">Sačuvaj</button>
               </form>
             </div>
           </div>
@@ -89,10 +89,10 @@ function CategoriesPage() {
 
         {/* Kolona za Tabelu - Širi se na col-12 ako nismo admini */}
         <div className={isAdmin ? "col-md-8" : "col-md-12"}>
-          <div className="card p-3 shadow-sm">
+          <div className="custom-card">
             <h4 className="mb-3">Lista Kategorija</h4>
             {error && !isAdmin && <div className="alert alert-danger p-2">{error}</div>}
-            <table className="table table-striped table-bordered mb-0">
+            <table className="table table-striped table-bordered custom-table">
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>

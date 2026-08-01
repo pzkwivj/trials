@@ -101,7 +101,7 @@ function DiscountsPage() {
         {/* Kolona za Formu - VIDI SE SAMO AKO JE KORISNIK ADMIN */}
         {isAdmin && (
           <div className="col-md-4">
-            <div className="card p-3 shadow-sm mb-4">
+            <div className="custom-card">
               <h4 className="mb-3">Novi Popust</h4>
               {error && <div className="alert alert-danger p-2">{error}</div>}
 
@@ -110,7 +110,7 @@ function DiscountsPage() {
                   <label className="form-label">Procenat popusta (%)</label>
                   <input
                     type="number"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.percentage}
                     onChange={(e) => setFormData({ ...formData, percentage: e.target.value })}
                     required
@@ -121,7 +121,7 @@ function DiscountsPage() {
                   <label className="form-label">Datum početka</label>
                   <input
                     type="date"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     required
@@ -132,7 +132,7 @@ function DiscountsPage() {
                   <label className="form-label">Datum završetka</label>
                   <input
                     type="date"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     required
@@ -142,7 +142,7 @@ function DiscountsPage() {
                 <div className="mb-2">
                   <label className="form-label">Proizvod</label>
                   <select
-                    className="form-select"
+                    className="form-select custom-select"
                     value={formData.product.productId}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -162,7 +162,7 @@ function DiscountsPage() {
                 <div className="mb-3">
                   <label className="form-label">Kompanija</label>
                   <select
-                    className="form-select"
+                    className="form-select custom-select"
                     value={formData.company.companyId}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -187,10 +187,10 @@ function DiscountsPage() {
 
         {/* Kolona za Tabelu - SADA JE PRAVILNO ZATVORENA I ŠIRI SE AKO KORISNIK NIJE ADMIN */}
         <div className={isAdmin ? "col-md-8" : "col-md-12"}>
-          <div className="card p-3 shadow-sm">
+          <div className="custom-card">
             <h4 className="mb-3">Lista Popusta</h4>
             {error && !isAdmin && <div className="alert alert-danger p-2">{error}</div>}
-            <table className="table table-striped table-bordered mb-0">
+            <table className="table table-striped table-bordered custom-table">
               <thead className="table-dark">
                 <tr>
                   <th>Proizvod</th>

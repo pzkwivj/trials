@@ -69,7 +69,7 @@ function CompaniesPage() {
         {/* Kolona za Formu - VIDI SE SAMO AKO JE KORISNIK ADMIN */}
         {isAdmin && (
           <div className="col-md-4">
-            <div className="card p-3 shadow-sm mb-4">
+            <div className="custom-card">
               <h4 className="mb-3">Nova Kompanija</h4>
               {error && <div className="alert alert-danger p-2">{error}</div>}
               <form onSubmit={handleSubmit}>
@@ -77,7 +77,7 @@ function CompaniesPage() {
                   <label className="form-label">Naziv</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.companyName}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     required
@@ -87,7 +87,7 @@ function CompaniesPage() {
                   <label className="form-label">PIB (9 cifara)</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.pib}
                     onChange={(e) => setFormData({ ...formData, pib: e.target.value })}
                     required
@@ -97,7 +97,7 @@ function CompaniesPage() {
                   <label className="form-label">Adresa</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     required
@@ -111,10 +111,10 @@ function CompaniesPage() {
 
         {/* Kolona za Tabelu - Širi se na col-12 ako nismo admini */}
         <div className={isAdmin ? "col-md-8" : "col-md-12"}>
-          <div className="card p-3 shadow-sm">
+          <div className="custom-card">
             <h4 className="mb-3">Lista Kompanija</h4>
             {error && !isAdmin && <div className="alert alert-danger p-2">{error}</div>}
-            <table className="table table-striped table-bordered mb-0">
+            <table className="table table-striped table-bordered custom-table">
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>

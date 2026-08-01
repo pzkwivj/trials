@@ -75,37 +75,37 @@ const { isAdmin, adminPassword } = useContext(AdminContext);
         {/* Kolona za Formu - PRIKAZUJE SE SAMO AKO JE KORISNIK ADMIN */}
         {isAdmin && (
           <div className="col-md-4">
-            <div className="card p-3 shadow-sm mb-4">
+            <div className="custom-card">
               <h4 className="mb-3">Novi Proizvod</h4>
               {error && <div className="alert alert-danger p-2">{error}</div>}
               <form onSubmit={handleSubmit}>
                 <div className="mb-2">
                   <label className="form-label">Naziv proizvoda</label>
-                  <input type="text" className="form-control" value={formData.productName} onChange={(e) => setFormData({ ...formData, productName: e.target.value })} required />
+                  <input type="text" className="form-control custom-input" value={formData.productName} onChange={(e) => setFormData({ ...formData, productName: e.target.value })} required />
                 </div>
                 <div className="mb-2">
                   <label className="form-label">Cena (RSD)</label>
-                  <input type="number" step="0.01" className="form-control" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
+                  <input type="number" step="0.01" className="form-control custom-input" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
                 </div>
                 <div className="mb-2">
                   <label className="form-label">Link do proizvoda</label>
-                  <input type="url" className="form-control" value={formData.productUrl} onChange={(e) => setFormData({ ...formData, productUrl: e.target.value })} />
+                  <input type="url" className="form-control custom-input" value={formData.productUrl} onChange={(e) => setFormData({ ...formData, productUrl: e.target.value })} />
                 </div>
                 <div className="mb-2">
                   <label className="form-label">Kategorija</label>
-                  <select className="form-select" value={formData.category.categoryId} onChange={(e) => setFormData({ ...formData, category: { categoryId: e.target.value } })} required>
+                  <select className="form-select custom-select" value={formData.category.categoryId} onChange={(e) => setFormData({ ...formData, category: { categoryId: e.target.value } })} required>
                     <option value="">-- Izaberi kategoriju --</option>
                     {categories.map(cat => <option key={cat.categoryId} value={cat.categoryId}>{cat.categoryName}</option>)}
                   </select>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Kompanija</label>
-                  <select className="form-select" value={formData.company.companyId} onChange={(e) => setFormData({ ...formData, company: { companyId: e.target.value } })} required>
+                  <select className="form-select custom-select" value={formData.company.companyId} onChange={(e) => setFormData({ ...formData, company: { companyId: e.target.value } })} required>
                     <option value="">-- Izaberi kompaniju --</option>
                     {companies.map(com => <option key={com.companyId} value={com.companyId}>{com.companyName}</option>)}
                   </select>
                 </div>
-                <button type="submit" className="btn btn-primary w-100">Sačuvaj Proizvod</button>
+                <button type="submit" className="btn btn-primary w-100 custom-btn">Sačuvaj Proizvod</button>
               </form>
             </div>
           </div>
@@ -113,15 +113,15 @@ const { isAdmin, adminPassword } = useContext(AdminContext);
 
         {/* Kolona za Tabelu - Širi se na ceo ekran (col-12) ako nismo admini, ili zauzima col-8 ako jesmo */}
         <div className={isAdmin ? "col-md-8" : "col-md-12"}>
-          <div className="card p-3 shadow-sm mb-4">
+          <div className="custom-card">
             
             {/* Kontrole za pretragu i sortiranje */}
             <div className="row g-2 mb-3 align-items-center">
               <div className="col-md-7">
-                <input type="text" className="form-control" placeholder="Pretraži proizvode po nazivu..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                <input type="text" className="form-control custom-input" placeholder="Pretraži proizvode po nazivu..." value={search} onChange={(e) => setSearch(e.target.value)} />
               </div>
               <div className="col-md-5">
-                <select className="form-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <select className="form-select custom-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                   <option value="productId">Podrazumevano (ID)</option>
                   <option value="priceAsc">Cena: Od najjeftinijeg</option>
                   <option value="priceDesc">Cena: Od najskupljeg</option>
@@ -131,7 +131,7 @@ const { isAdmin, adminPassword } = useContext(AdminContext);
             </div>
 
             <h4 className="mb-3">Lista Proizvoda</h4>
-            <table className="table table-striped table-bordered mb-0">
+            <table className="table table-striped table-bordered custom-table">
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>

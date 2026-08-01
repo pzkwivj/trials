@@ -109,3 +109,102 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ==========================================================================
+   ZAJEDNIČKI STILOVI ZA SISTEM POPUSTA (Uniformni izgled za sve stranice)
+   ========================================================================== */
+
+/* 1. Globalna pozadina aplikacije za lepši kontrast sa belim karticama */
+body {
+    background-color: #f6f8fa !important;
+    color: #212529;
+}
+
+/* 2. Uniformne kartice sa mekom senkom i zaobljenim ivicama (za Forme i Tabele) */
+.custom-card {
+    border: none !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    padding: 24px !important;
+}
+
+/* 3. Modernizovana polja za unos (Inputi i Select meniji) */
+.custom-input, .custom-select {
+    border-radius: 8px !important;
+    border: 1px solid #dcdcdc !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+/* Efekat kada klikneš unutar polja za unos */
+.custom-input:focus, .custom-select:focus {
+    border-color: #333333 !important;
+    box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1) !important;
+    outline: none !important;
+}
+
+/* 4. Lepša i preglednija tabela sa efektom prelaza miša (Hover) */
+.custom-table {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.custom-table thead th {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 12px !important;
+    letter-spacing: 0.5px;
+    padding: 12px 16px !important;
+    border: none !important;
+}
+
+.custom-table tbody td {
+    padding: 14px 16px !important;
+    vertical-align: middle !important;
+    font-size: 14px !important;
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Animacija i blaga promena boje kada pređeš mišem preko reda u tabeli */
+.custom-table tbody tr {
+    transition: background-color 0.15s ease-in-out !important;
+}
+
+.custom-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* 5. Modernija i zaobljena dugmad */
+.custom-btn {
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* 6. Specifični detalji za cene i procente (korisno za DiscountsPage i ProductsPage) */
+.price-tag {
+    font-weight: 600;
+    color: #212529;
+}
+
+.discount-badge {
+    background-color: #ffe3e3;
+    color: #dc3545;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.success-price {
+    color: #198754;
+    font-weight: 700;
+}
+

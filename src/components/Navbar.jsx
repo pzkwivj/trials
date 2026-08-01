@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom'; // Pretpostavljamo da koristiš react-router-dom
+import { Link } from 'react-router-dom';
 import { AdminContext } from '../context/AdminContext';
 
 function Navbar() {
@@ -19,38 +19,64 @@ function Navbar() {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-                <div className="container">
-                    <nav style={{ padding: '20px', backgroundColor: '#333', color: '#fff' }}>
-                        <Link className="navbar-brand fw-bold" to="/">Sistem Popusta</Link>
-                    </nav>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-2">
+                <div className="container d-flex justify-content-between align-items-center">
+                    
+                    {/* Naziv aplikacije sa leve strane */}
+                    <Link className="navbar-brand fw-bold fs-5" to="/">
+                        Sistem Popusta
+                    </Link>
+                    
+                    {/* Desna strana - POTPUNO DISKRETAN TEKST UMESTO DUGMETA */}
                     <div>
                         {isAdmin ? (
-                            <button className="btn btn-danger btn-sm" onClick={logout}>Odjavi se (Admin)</button>
+                            <span 
+                                className="text-danger fw-semibold" 
+                                style={{ cursor: 'pointer', fontSize: '12px', letterSpacing: '0.5px' }} 
+                                onClick={logout}
+                            >
+                                ODJAVI SE (ADMIN)
+                            </span>
                         ) : (
-                            <button className="btn btn-primary btn-sm" onClick={() => setShowModal(true)}>Prijava za Admina</button>
+                            <span 
+                                className="text-muted" 
+                                style={{ 
+                                    cursor: 'pointer', 
+                                    fontSize: '12px', 
+                                    opacity: 0.4, 
+                                    transition: 'opacity 0.2s ease',
+                                    letterSpacing: '0.5px'
+                                }} 
+                                onClick={() => setShowModal(true)}
+                                onMouseEnter={(e) => e.target.style.opacity = 1}
+                                onMouseLeave={(e) => e.target.style.opacity = 0.4}
+                            >
+                                ADMINISTRACIJA
+                            </span>
                         )}
                     </div>
+
                 </div>
             </nav>
 
+            {/* Modal za šifru (Centriran) */}
             {showModal && (
-                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content p-3">
-                            <h5>Unesite Admin Šifru</h5>
+                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content p-4 shadow-lg border-0">
+                            <h5 className="mb-3 fw-bold">Unesite Admin Šifru</h5>
                             <form onSubmit={handleLogin}>
                                 <input
                                     type="password"
-                                    className="form-control mb-3"
+                                    className="form-control mb-3 py-2"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Šifra..."
                                     required
                                 />
-                                <div className="d-flex gap-2">
-                                    <button type="submit" className="btn btn-success">Potvrdi</button>
-                                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Otkaži</button>
+                                <div className="d-flex gap-2 justify-content-end">
+                                    <button type="button" className="btn btn-secondary px-3" onClick={() => setShowModal(false)}>Otkaži</button>
+                                    <button type="submit" className="btn btn-success px-4">Potvrdi</button>
                                 </div>
                             </form>
                         </div>

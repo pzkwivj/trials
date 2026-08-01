@@ -179,7 +179,7 @@ function DiscountsPage() {
                   </select>
                 </div>
 
-                <button type="submit" className="btn btn-danger w-100">Aktiviraj Popust</button>
+                <button type="submit" className="btn btn-danger w-100 custom-btn">Aktiviraj Popust</button>
               </form>
             </div>
           </div>
@@ -220,7 +220,7 @@ function DiscountsPage() {
                       </td>
                       {isAdmin && (
                         <td>
-                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(d.discountId)}>Ukloni</button>
+                          <button className="btn btn-danger custom-btn" onClick={() => handleDelete(d.discountId)}>Ukloni</button>
                         </td>
                       )}
                     </tr>

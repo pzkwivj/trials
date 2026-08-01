@@ -133,7 +133,7 @@ function CompaniesPage() {
                     <td>{c.address}</td>
                     {isAdmin && (
                       <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.companyId)}>Obriši</button>
+                        <button className="btn btn-danger custom-btn" onClick={() => handleDelete(c.companyId)}>Obriši</button>
                       </td>
                     )}
                   </tr>

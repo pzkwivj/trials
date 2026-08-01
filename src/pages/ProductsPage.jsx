@@ -156,7 +156,7 @@ const { isAdmin, adminPassword } = useContext(AdminContext);
                     <td>{p.company?.companyName || 'N/A'}</td>
                     {isAdmin && ( // Dugme obriši se vidi samo za admina
                       <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(p.productId)}>Obriši</button>
+                        <button className="btn btn-danger custom-btn" onClick={() => handleDelete(p.productId)}>Obriši</button>
                       </td>
                     )}
                   </tr>

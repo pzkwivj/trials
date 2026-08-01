@@ -107,7 +107,7 @@ function CategoriesPage() {
                     <td>{cat.categoryName}</td>
                     {isAdmin && (
                       <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(cat.categoryId)}>Obriši</button>
+                        <button className="btn btn-danger custom-btn" onClick={() => handleDelete(cat.categoryId)}>Obriši</button>
                       </td>
                     )}
                   </tr>
